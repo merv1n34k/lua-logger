@@ -27,7 +27,7 @@ Latest Git revision
 
 With LuaRocks:
 
-	$ sudo luarocks install https://github.com/Neopallium/lualogging/raw/master/lualogging-scm-0.rockspec
+	$ sudo luarocks install https://github.com/mwchase/log4l/raw/log4l/lualogging-scm-0.rockspec
 
 With make:
 
