@@ -3,7 +3,7 @@ local has_module, err = pcall(require, "luasql.sqlite3")
 if not has_module then
 	print("SQLite 3 Logging SKIP (missing luasql.sqlite3)")
 else
-	local luasql = {sqlite3 = require "luasql.sqlite3"}
+	local luasql = require "luasql.sqlite3"
 	if not luasql or not luasql.sqlite3 then
 		print("Missing LuaSQL SQLite 3 driver!")
 	else
