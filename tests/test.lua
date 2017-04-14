@@ -10,7 +10,7 @@ local test = {
 
 print ("Start of Logging tests")
 for _, filename in ipairs(test) do
-	dofile(filename)
+	dofile("tests/" .. filename)
 end
 print ("End of Logging tests")
 
