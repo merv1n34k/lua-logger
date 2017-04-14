@@ -13,6 +13,7 @@ before_install:
 
 install:
   - luarocks install luasocket
+  - luarocks install luasql-sqlite3
 
 script:
   - cd tests
