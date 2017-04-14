@@ -1,3 +1,4 @@
+print(package.path)
 
 local test = {
 	"testConsole.lua",
