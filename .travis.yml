@@ -19,7 +19,6 @@ install:
   - luarocks install luacov-coveralls
 
 script:
-  - cd tests
   - ./run_tests.sh
 
 after_success:
