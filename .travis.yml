@@ -13,4 +13,6 @@ before_install:
 install:
   - luarocks install luasocket
 
-script: tests/run_tests.sh
+script:
+  - cd tests
+  - ./run_tests.sh
