@@ -14,5 +14,6 @@ install:
   - luarocks install luasocket
 
 script:
+  - echo $LUA_PATH
   - cd tests
   - ./run_tests.sh
