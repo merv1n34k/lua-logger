@@ -9,6 +9,7 @@ before_install:
   - pip install hererocks
   - hererocks lua_install -r^ --$LUA
   - export PATH=$PATH:$PWD/lua_install/bin
+  - eval $(luarocks path --bin)
 
 install:
   - luarocks install luasocket
