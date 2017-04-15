@@ -11,7 +11,7 @@ local logger         = log_file(log_filename, max_size, max_index)
 local size = 0
 while size < total_log_size do
 	local data = string.format("Test actual size[%d]", size)
-	logger:debug(data)
+	assert(logger:debug(data))
 	size = size + string.len(data)
 end
 

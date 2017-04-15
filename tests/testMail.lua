@@ -8,9 +8,9 @@ local logger = log_email {
 	}, -- headers
 }
 
-logger:info("logging.email test")
-logger:debug("debugging...")
-logger:error("error!")
+assert(logger:info("logging.email test"))
+assert(logger:debug("debugging..."))
+assert(logger:error("error!"))
 
 print("Mail Logging OK")
 
