@@ -19,7 +19,7 @@ install:
   - luarocks install luacov-coveralls
 
 before_script:
-  - nc –l 5000 &; NC_PID=$!
+  - nc –l 5000 & NC_PID=$!
 
 script:
   - ./run_tests.sh
