@@ -13,8 +13,8 @@ assert(logger:debug("debugging..."))
 assert(logger:error("error!"))
 
 local bad_logger = log_email {
-    rcpt = "mail@host.com",
-    from = "mail@host.com",
+    rcpt = "mail@5",
+    from = "mail@5",
     {
         subject = "[%level] logging.email test",
     }, -- headers
