@@ -18,8 +18,15 @@ install:
   - luarocks install cluacov
   - luarocks install luacov-coveralls
 
+before_script:
+  - nc –l 5000 &
+    NC_PID=$!
+
 script:
   - ./run_tests.sh
+
+after_script:
+  - kill $NC_PID
 
 after_success:
   - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
