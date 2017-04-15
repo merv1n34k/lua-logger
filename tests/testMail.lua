@@ -24,5 +24,8 @@ assert(not bad_logger:info("logging.email test"))
 assert(not bad_logger:debug("debugging..."))
 assert(not bad_logger:error("error!"))
 
+assert(not log_email{rcpt = "mail@localhost"})
+assert(not log_email{from = "mail@localhost"})
+
 print("Mail Logging OK")
 
