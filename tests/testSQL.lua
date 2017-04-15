@@ -22,6 +22,8 @@ else
 		logger:debug("debugging...")
 		logger:error("error!")
 		print("SQLite 3 Logging OK")
+
+		assert(not log_sql())
 	end
 end
 
