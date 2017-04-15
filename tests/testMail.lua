@@ -12,5 +12,17 @@ assert(logger:info("logging.email test"))
 assert(logger:debug("debugging..."))
 assert(logger:error("error!"))
 
+local bad_logger = log_email {
+    rcpt = "mail@example.com",
+    from = "mail@example.com",
+    {
+        subject = "[%level] logging.email test",
+    }, -- headers
+}
+
+assert(not bad_logger:info("logging.email test"))
+assert(not bad_logger:debug("debugging..."))
+assert(not bad_logger:error("error!"))
+
 print("Mail Logging OK")
 
