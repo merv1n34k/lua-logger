@@ -170,27 +170,31 @@ local function tostring(value)
 			str = _tostring(value)
 		end
 	else
-		local auxTable = {}
-		for key in pairs(value) do
-			if (tonumber(key) ~= key) then
-				table.insert(auxTable, key)
+		local strTable = {}
+		local numTable = {}
+		local mapping = {}
+		for k, v in pairs(value) do
+			if type(k) == 'number' then
+				numTable[k] = tostring(v)
 			else
-				table.insert(auxTable, tostring(key))
+				mapping[tostring(key)] = mapping[tostring(key)] or {}
+				table.insert(strTable, tostring(key))
+				table.insert(mapping[tostring(key)], key)
 			end
 		end
-		table.sort(auxTable)
+		table.sort(strTable)
 	
 		str = str..'{'
 		local separator = ""
 		local entry = ""
-		for _, fieldName in ipairs(auxTable) do
-			if ((tonumber(fieldName)) and (tonumber(fieldName) > 0)) then
-				entry = tostring(value[tonumber(fieldName)])
-			else
-				entry = fieldName.." = "..tostring(value[fieldName])
-			end
-			str = str..separator..entry
+		for _, v in ipairs(numTable) do
+			str = str..separator..v
 			separator = ", "
+		for _, fieldName in ipairs(strTable) do
+			for _, field in ipairs(mapping[fieldName]) do
+				str = str..separator..fieldName.." = "..tostring(value[field])
+				separator = ", "
+			end
 		end
 		str = str..'}'
 	end
