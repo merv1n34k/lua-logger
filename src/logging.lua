@@ -172,17 +172,30 @@ local function tostring(value)
 	else
 		local strTable = {}
 		local numTable = {}
+		local outOfOrderTable = {}
+		local outOfOrderKeys = {}
+		local otherTable = {}
 		local mapping = {}
+		for k, v in ipairs(value) do
+			numTable[k] = tostring(v)
+		end
 		for k, v in pairs(value) do
 			if type(k) == 'number' then
-				numTable[k] = tostring(v)
+				if k < 1 or k > #numTable then
+					outOfOrderTable[k] = tostring(v)
+					table.insert(outOfOrderKeys, k)
+				end
+			elseif type(k) == 'string' then
+				table.insert(strTable, k)
 			else
 				mapping[tostring(k)] = mapping[tostring(k)] or {}
-				table.insert(strTable, tostring(k))
+				table.insert(otherTable, tostring(k))
 				table.insert(mapping[tostring(k)], k)
 			end
 		end
+		table.sort(outOfOrderKeys)
 		table.sort(strTable)
+		table.sort(otherTable)
 	
 		str = str..'{'
 		local separator = ""
@@ -190,9 +203,17 @@ local function tostring(value)
 			str = str..separator..v
 			separator = ", "
 		end
+		for _, v in ipairs(outOfOrderKeys) do
+			str = str..separator.."["..v.."]".." = "..outOfOrderTable[v]
+			separator = ", "
+		end
 		for _, fieldName in ipairs(strTable) do
+			str = str..separator..fieldName.." = "..tostring(value[fieldName])
+			separator = ", "
+		end
+		for _, fieldName in ipairs(otherTable) do
 			for _, field in ipairs(mapping[fieldName]) do
-				str = str..separator..fieldName.." = "..tostring(value[field])
+				str = str..separator.."["..fieldName.."]".." = "..tostring(value[field])
 				separator = ", "
 			end
 		end
