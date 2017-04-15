@@ -18,12 +18,25 @@ else
 			keepalive = true,
 		}
 
-		logger:info("logging.sql test")
-		logger:debug("debugging...")
-		logger:error("error!")
-		print("SQLite 3 Logging OK")
+		assert(logger:info("logging.sql test"))
+		assert(logger:debug("debugging..."))
+		assert(logger:error("error!"))
+
+		local reconnecting_logger = log_sql{
+			connectionfactory = function()
+				local con, err = env:connect("test.db")
+				assert(con, err)
+				return con
+			end,
+		}
+
+		assert(reconnecting_logger:info("logging.sql test"))
+		assert(reconnecting_logger:debug("debugging..."))
+		assert(reconnecting_logger:error("error!"))
 
 		assert(not log_sql())
+
+		print("SQLite 3 Logging OK")
 	end
 end
 
