@@ -177,16 +177,15 @@ local function tostring(value)
 			if type(k) == 'number' then
 				numTable[k] = tostring(v)
 			else
-				mapping[tostring(key)] = mapping[tostring(key)] or {}
-				table.insert(strTable, tostring(key))
-				table.insert(mapping[tostring(key)], key)
+				mapping[tostring(k)] = mapping[tostring(k)] or {}
+				table.insert(strTable, tostring(k))
+				table.insert(mapping[tostring(k)], k)
 			end
 		end
 		table.sort(strTable)
 	
 		str = str..'{'
 		local separator = ""
-		local entry = ""
 		for _, v in ipairs(numTable) do
 			str = str..separator..v
 			separator = ", "
