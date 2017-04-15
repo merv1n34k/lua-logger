@@ -190,6 +190,7 @@ local function tostring(value)
 		for _, v in ipairs(numTable) do
 			str = str..separator..v
 			separator = ", "
+		end
 		for _, fieldName in ipairs(strTable) do
 			for _, field in ipairs(mapping[fieldName]) do
 				str = str..separator..fieldName.." = "..tostring(value[field])
