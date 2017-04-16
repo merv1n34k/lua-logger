@@ -10,9 +10,9 @@
 local logging = require"logging"
 local socket = require"socket"
 
-function logging.socket(address, port, logPattern)
+function logging.socket(address, port, logPattern, datePattern)
 	return logging.new( function(self, level, message)
-		local s = logging.prepareLogMsg(logPattern, os.date(), level, message)
+		local s = logging.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 
 		local socket, err = socket.connect(address, port)
 		if not socket then

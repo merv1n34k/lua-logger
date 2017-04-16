@@ -9,9 +9,9 @@
 
 local logging = require"logging"
 
-function logging.console(logPattern)
+function logging.console(logPattern, datePattern)
 	return logging.new( function(self, level, message)
-		io.stdout:write(logging.prepareLogMsg(logPattern, os.date(), level, message))
+		io.stdout:write(logging.prepareLogMsg(logPattern, os.date(datePattern), level, message))
 		return true
 	end)
 end

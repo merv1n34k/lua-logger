@@ -39,7 +39,7 @@ function logging.file(filename, datePattern, logPattern)
 		if not f then
 			return nil, msg
 		end
-		local s = logging.prepareLogMsg(logPattern, os.date(), level, message)
+		local s = logging.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 		f:write(s)
 		return true
 	end)

@@ -15,6 +15,7 @@ function logging.sql(params)
 	params.logdatefield = params.logdatefield or "LogDate"
 	params.loglevelfield = params.loglevelfield or "LogLevel"
 	params.logmessagefield = params.logmessagefield or "LogMessage"
+	params.datePattern = params.datePattern or "%Y-%m-%d %H:%M:%S"
 
 	if params.connectionfactory == nil or type(params.connectionfactory) ~= "function" then
 		return nil, "No specified connection factory function"
@@ -33,7 +34,7 @@ function logging.sql(params)
 			end
 		end
 
-		local logDate = os.date("%Y-%m-%d %H:%M:%S")
+		local logDate = os.date(params.datePattern)
 		local insert  = string.format("INSERT INTO %s (%s, %s, %s) VALUES ('%s', '%s', '%s')",
 			params.tablename, params.logdatefield, params.loglevelfield,
 			params.logmessagefield, logDate, level, string.gsub(message, "'", "''"))
