@@ -15,6 +15,13 @@ Please see docs at http://neopallium.github.com/lualogging/ for more details
 Installation
 ============
 
+Release 0.1
+-------------
+
+With LuaRocks:
+
+    $ sudo luarocks install log4l
+
 Latest Git revision
 -------------------
 
