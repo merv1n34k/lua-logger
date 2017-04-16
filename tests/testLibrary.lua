@@ -10,3 +10,8 @@ local self_ref = {}
 self_ref[self_ref] = self_ref
 
 lib.tostring(self_ref)
+
+local normal = {}
+
+assert(lib.tostring{normal} == '{{}}', "simple case incorrect")
+assert(lib.tostring{normal, normal} == '{{}, {}}', "non-nested case incorrect")
