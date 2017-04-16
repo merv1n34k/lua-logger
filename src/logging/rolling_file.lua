@@ -53,7 +53,7 @@ local openRollingFileLogger = function (self)
 end
 
 
-function logging.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern)
+function logging.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern, datePattern)
 	if type(filename) ~= "string" then
 		filename = "lualogging.log"
 	end
@@ -69,7 +69,7 @@ function logging.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern)
 		if not f then
 			return nil, msg
 		end
-		local s = logging.prepareLogMsg(logPattern, os.date(), level, message)
+		local s = logging.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 		f:write(s)
 		return true
 	end)
