@@ -171,6 +171,10 @@ local function tostring(value, seen)
 			str = _tostring(value)
 		end
 	else
+		local mt = getmetatable(value) or {}
+		if mt.__tostring then
+			return _tostring(value)
+		end
 		if seen[value] then
 			return '...'
 		else
