@@ -230,6 +230,7 @@ local function tostring(value, seen)
 		end
 		str = str..'}'
 	end
+	seen[value] = nil
 	return str
 end
 logging.tostring = tostring
