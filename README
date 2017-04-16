@@ -1,33 +1,26 @@
-LuaLogging
+log4l
 ==========
-http://neopallium.github.com/lualogging/
+https://mwchase.github.io/log4l/
 
-LuaLogging provides a simple API to use logging features in Lua.
-Its design was based on log4j. LuaLogging currently supports,
+log4l provides a simple API to use logging features in Lua.
+Its design was based on log4j. log4l currently supports,
 through the use of appenders, console, file, rolling file, email, socket and sql outputs.
 
 Current version is 1.3.0. It was developed for Lua 5.1 & 5.2.
 
-LuaLogging is free software and uses the same license as Lua. It is part of the Kepler Project.
+log4l is free software and uses the same license as Lua. It is part of the Kepler Project.
 
 Please see docs at http://neopallium.github.com/lualogging/ for more details
 
 Installation
 ============
 
-Release 1.3.0
--------------
-
-With LuaRocks:
-
-	$ sudo luarocks install lualogging
-
 Latest Git revision
 -------------------
 
 With LuaRocks:
 
-	$ sudo luarocks install https://github.com/mwchase/log4l/raw/log4l/lualogging-scm-0.rockspec
+	$ sudo luarocks install https://github.com/mwchase/log4l/raw/log4l/log4l-scm-0.rockspec
 
 With make:
 
