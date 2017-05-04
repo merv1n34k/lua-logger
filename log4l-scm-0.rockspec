@@ -23,13 +23,13 @@ build   = {
     type        = "none",
     install = {
         lua = {
-            ['logging'] = "src/logging.lua",
-            ['logging.console']  = "src/logging/console.lua",
-            ['logging.file']  = "src/logging/file.lua",
-            ['logging.rolling_file']  = "src/logging/rolling_file.lua",
-            ['logging.email']  = "src/logging/email.lua",
-            ['logging.sql']  = "src/logging/sql.lua",
-            ['logging.socket']  = "src/logging/socket.lua",
+            ['log4l'] = "src/log4l.lua",
+            ['log4l.console']  = "src/log4l/console.lua",
+            ['log4l.file']  = "src/log4l/file.lua",
+            ['log4l.rolling_file']  = "src/log4l/rolling_file.lua",
+            ['log4l.email']  = "src/log4l/email.lua",
+            ['log4l.sql']  = "src/log4l/sql.lua",
+            ['log4l.socket']  = "src/log4l/socket.lua",
         }
     },
     copy_directories = {
