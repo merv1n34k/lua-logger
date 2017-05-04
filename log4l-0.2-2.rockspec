@@ -4,7 +4,7 @@ package = "log4l"
 version = "0.2-2"
 source  = {
     url = "git://github.com/mwchase/log4l.git",
-    branch = "log4l-v0.1",
+    branch = "log4l-v0.2",
 }
 description = {
     summary = "A simple API to use logging features",
