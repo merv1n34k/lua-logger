@@ -1,4 +1,4 @@
-local log_file = require "logging.rolling_file"
+local log_file = require "log4l.rolling_file"
 
 local max_size       = 1024 * 10 --10kb
 local max_index      = 5

@@ -1,8 +1,8 @@
-local log_console = require"logging.console"
+local log_console = require"log4l.console"
 
 local logger = log_console()
 
-assert(logger:info("logging.console test"))
+assert(logger:info("log4l.console test"))
 assert(logger:debug("debugging..."))
 assert(logger:error("error!"))
 assert(logger:debug("string with %4"))

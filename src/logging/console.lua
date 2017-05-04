@@ -7,7 +7,7 @@
 --
 -------------------------------------------------------------------------------
 
-local logging = require"logging"
+local logging = require"log4l"
 
 function logging.console(logPattern, datePattern)
 	return logging.new( function(self, level, message)

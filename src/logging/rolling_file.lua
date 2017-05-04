@@ -8,7 +8,7 @@
 -- @copyright 2004-2013 Kepler Project
 ---------------------------------------------------------------------------
 
-local logging = require"logging"
+local logging = require"log4l"
 
 local function openFile(self)
 	self.file = io.open(self.filename, "a")

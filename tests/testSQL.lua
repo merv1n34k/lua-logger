@@ -1,4 +1,4 @@
-local log_sql = require "logging.sql"
+local log_sql = require "log4l.sql"
 local has_module, err = pcall(require, "luasql.sqlite3")
 if not has_module then
 	print("SQLite 3 Logging SKIP (missing luasql.sqlite3)")
@@ -18,7 +18,7 @@ else
 			keepalive = true,
 		}
 
-		assert(logger:info("logging.sql test"))
+		assert(logger:info("log4l.sql test"))
 		assert(logger:debug("debugging..."))
 		assert(logger:error("error!"))
 
@@ -30,7 +30,7 @@ else
 			end,
 		}
 
-		assert(reconnecting_logger:info("logging.sql test"))
+		assert(reconnecting_logger:info("log4l.sql test"))
 		assert(reconnecting_logger:debug("debugging..."))
 		assert(reconnecting_logger:error("error!"))
 

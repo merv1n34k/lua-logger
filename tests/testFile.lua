@@ -28,19 +28,19 @@ os.date = function (...)
 	return mock.date
 end
 
-local log_file = require "logging.file"
+local log_file = require "log4l.file"
 
 mock.date = "2008-01-01"
 local logger = log_file("__TEST%s.log", "%Y-%m-%d")
 
 assert(mock.handle["__TEST"..mock.date..".log"] == nil)
 
-assert(logger:info("logging.file test"))
+assert(logger:info("log4l.file test"))
 
 assert(mock.handle["__TEST"..mock.date..".log"].mode == "a")
 assert(#mock.handle["__TEST"..mock.date..".log"].lines == 1)
 assert(mock.handle["__TEST"..mock.date..".log"].setvbuf == "line")
-assert(mock.handle["__TEST"..mock.date..".log"].lines[1] == "2008-01-01 INFO logging.file test\n")
+assert(mock.handle["__TEST"..mock.date..".log"].lines[1] == "2008-01-01 INFO log4l.file test\n")
 
 mock.date = "2008-01-02"
 

@@ -7,7 +7,7 @@
 --
 -------------------------------------------------------------------------------
 
-local logging = require"logging"
+local logging = require"log4l"
 
 function logging.sql(params)
 	params = params or {}
