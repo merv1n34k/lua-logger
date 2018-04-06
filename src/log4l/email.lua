@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Emails logging information to the given recipient
+-- Emails log4l information to the given recipient
 --
 -- @author Thiago Costa Ponte (thiago@ideais.com.br)
 --
@@ -7,10 +7,10 @@
 --
 -------------------------------------------------------------------------------
 
-local logging = require"log4l"
+local log4l = require"log4l"
 local smtp = require"socket.smtp"
 
-function logging.email(params)
+function log4l.email(params)
 	params = params or {}
 	params.headers = params.headers or {}
 
@@ -23,11 +23,11 @@ function logging.email(params)
 
 	local datePattern = params.datePattern
 
-	return logging.new( function(self, level, message)
-		local s = logging.prepareLogMsg(params.logPattern, os.date(datePattern), level, message)
+	return log4l.new( function(self, level, message)
+		local s = log4l.prepareLogMsg(params.logPattern, os.date(datePattern), level, message)
 		if params.headers.subject then
 			params.headers.subject =
-				logging.prepareLogMsg(params.headers.subject, os.date(datePattern), level, message)
+				log4l.prepareLogMsg(params.headers.subject, os.date(datePattern), level, message)
 		end
 		local msg = { headers = params.headers, body = s }
 		params.source = smtp.message(msg)
@@ -41,5 +41,5 @@ function logging.email(params)
 	end)
 end
 
-return logging.email
+return log4l.email
 

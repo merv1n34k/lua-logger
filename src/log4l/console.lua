@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Prints logging information to console
+-- Prints log4l information to console
 --
 -- @author Thiago Costa Ponte (thiago@ideais.com.br)
 --
@@ -7,14 +7,14 @@
 --
 -------------------------------------------------------------------------------
 
-local logging = require"log4l"
+local log4l = require"log4l"
 
-function logging.console(logPattern, datePattern)
-	return logging.new( function(self, level, message)
-		io.stdout:write(logging.prepareLogMsg(logPattern, os.date(datePattern), level, message))
+function log4l.console(logPattern, datePattern)
+	return log4l.new( function(self, level, message)
+		io.stdout:write(log4l.prepareLogMsg(logPattern, os.date(datePattern), level, message))
 		return true
 	end)
 end
 
-return logging.console
+return log4l.console
 

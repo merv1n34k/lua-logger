@@ -8,7 +8,7 @@
 -- @copyright 2004-2013 Kepler Project
 ---------------------------------------------------------------------------
 
-local logging = require"log4l"
+local log4l = require"log4l"
 
 local function openFile(self)
 	self.file = io.open(self.filename, "a")
@@ -53,9 +53,9 @@ local openRollingFileLogger = function (self)
 end
 
 
-function logging.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern, datePattern)
+function log4l.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern, datePattern)
 	if type(filename) ~= "string" then
-		filename = "lualogging.log"
+		filename = "lualog4l.log"
 	end
 
 	local obj = {
@@ -64,16 +64,16 @@ function logging.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern,
 		maxIndex = maxBackupIndex or 1
 	}
 
-	return logging.new( function(self, level, message)
+	return log4l.new( function(self, level, message)
 		local f, msg = openRollingFileLogger(obj)
 		if not f then
 			return nil, msg
 		end
-		local s = logging.prepareLogMsg(logPattern, os.date(datePattern), level, message)
+		local s = log4l.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 		f:write(s)
 		return true
 	end)
 end
 
-return logging.rolling_file
+return log4l.rolling_file
 

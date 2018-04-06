@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Saves logging information in a file
+-- Saves log4l information in a file
 --
 -- @author Thiago Costa Ponte (thiago@ideais.com.br)
 --
@@ -7,7 +7,7 @@
 --
 -------------------------------------------------------------------------------
 
-local logging = require"log4l"
+local log4l = require"log4l"
 
 local lastFileNameDatePattern
 local lastFileHandler
@@ -29,21 +29,21 @@ local openFileLogger = function (filename, datePattern)
 	end
 end
 
-function logging.file(filename, datePattern, logPattern)
+function log4l.file(filename, datePattern, logPattern)
 	if type(filename) ~= "string" then
-		filename = "lualogging.log"
+		filename = "lualog4l.log"
 	end
 
-	return logging.new( function(self, level, message)
+	return log4l.new( function(self, level, message)
 		local f, msg = openFileLogger(filename, datePattern)
 		if not f then
 			return nil, msg
 		end
-		local s = logging.prepareLogMsg(logPattern, os.date(datePattern), level, message)
+		local s = log4l.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 		f:write(s)
 		return true
 	end)
 end
 
-return logging.file
+return log4l.file
 

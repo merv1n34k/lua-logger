@@ -7,7 +7,6 @@ local ipairs = ipairs
 
 local log4l = {
 
--- Meta information
 -- The DEBUG Level designates fine-grained instring.formational events that are most
 -- useful to debug an application
 DEBUG = "DEBUG",

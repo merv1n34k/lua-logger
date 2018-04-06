@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Sends the logging information through a socket using luasocket
+-- Sends the log4l information through a socket using luasocket
 --
 -- @author Thiago Costa Ponte (thiago@ideais.com.br)
 --
@@ -7,12 +7,12 @@
 --
 -------------------------------------------------------------------------------
 
-local logging = require"log4l"
+local log4l = require"log4l"
 local socket = require"socket"
 
-function logging.socket(address, port, logPattern, datePattern)
-	return logging.new( function(self, level, message)
-		local s = logging.prepareLogMsg(logPattern, os.date(datePattern), level, message)
+function log4l.socket(address, port, logPattern, datePattern)
+	return log4l.new( function(self, level, message)
+		local s = log4l.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 
 		local socket, err = socket.connect(address, port)
 		if not socket then
@@ -29,5 +29,5 @@ function logging.socket(address, port, logPattern, datePattern)
 	end)
 end
 
-return logging.socket
+return log4l.socket
 
