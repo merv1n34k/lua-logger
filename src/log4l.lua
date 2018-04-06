@@ -22,6 +22,29 @@ local DEFAULT_LEVELS = {
 	TRACE = "TRACE"
 }
 
+-- private log function, with support for formating a complex log message.
+local function log_msg(self, level, fmt, ...)
+	local f_type = type(fmt)
+	if f_type == 'string' then
+		if select('#', ...) > 0 then
+			local status, msg = pcall(string.format, fmt, ...)
+			if status then
+				return self:append(level, msg)
+			else
+				return self:append(level, "Error formatting log message: " .. msg)
+			end
+		else
+			-- only a single string, no formating needed.
+			return self:append(level, fmt)
+		end
+	elseif f_type == 'function' then
+		-- fmt should be a callable function which returns the message to log
+		return self:append(level, fmt(...))
+	end
+	-- fmt is not a string and not a function, just call inspect() on it.
+	return self:append(level, inspect(fmt))
+end
+
 -- improved assertion function.
 local function assert(exp, ...)
 	-- if exp is true, we are finished so don't do any processing of the parameters
@@ -72,31 +95,13 @@ function log4l.new(append, settings)
 	end
 
 	-- generic log function.
-	function logger:log(level, fmt, ...)
+	function logger:log(level, ...)
 		local order = self.levels[level]
 		assert(order, "undefined level `%s'", inspect(level))
 		if order < self.level_order then
 			return
 		end
-		local f_type = type(fmt)
-		if f_type == 'string' then
-			if select('#', ...) > 0 then
-				local status, msg = pcall(string.format, fmt, ...)
-				if status then
-					return self:append(level, msg)
-				else
-					return self:append(level, "Error formatting log message: " .. msg)
-				end
-			else
-				-- only a single string, no formating needed.
-				return self:append(level, fmt)
-			end
-		elseif f_type == 'function' then
-			-- fmt should be a callable function which returns the message to log
-			return self:append(level, fmt(...))
-		end
-		-- fmt is not a string and not a function, just call inspect() on it.
-		return self:append(level, inspect(fmt))
+		return log_msg(self, level, ...)
 	end
 
 	return logger
