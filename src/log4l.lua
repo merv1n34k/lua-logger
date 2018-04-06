@@ -28,29 +28,6 @@ for i=1,MAX_LEVELS do
 	DEFAULT_LEVELS[DEFAULT_LEVELS[i]] = i
 end
 
--- private log function, with support for formating a complex log message.
-local function LOG_MSG(self, level, fmt, ...)
-	local f_type = type(fmt)
-	if f_type == 'string' then
-		if select('#', ...) > 0 then
-			local status, msg = pcall(string.format, fmt, ...)
-			if status then
-				return self:append(level, msg)
-			else
-				return self:append(level, "Error formatting log message: " .. msg)
-			end
-		else
-			-- only a single string, no formating needed.
-			return self:append(level, fmt)
-		end
-	elseif f_type == 'function' then
-		-- fmt should be a callable function which returns the message to log
-		return self:append(level, fmt(...))
-	end
-	-- fmt is not a string and not a function, just call inspect() on it.
-	return self:append(level, inspect(fmt))
-end
-
 -- improved assertion function.
 local function assert(exp, ...)
 	-- if exp is true, we are finished so don't do any processing of the parameters
@@ -73,7 +50,7 @@ function log4l.new(append)
 	local logger = {}
 	logger.append = append
 
-	logger.setLevel = function (self, level)
+	function logger:setLevel(level)
 		local order = DEFAULT_LEVELS[level]
 		assert(order, "undefined level `%s'", inspect(level))
 		if self.level then
@@ -82,19 +59,37 @@ function log4l.new(append)
 		self.level = level
 		self.level_order = order
 	end
+	-- initialize log level.
+	logger:setLevel(log4l.DEBUG)
 
 	-- generic log function.
-	logger.log = function (self, level, ...)
-		local order = DEFAULT_LEVELS[level]
+	function logger:log(level, fmt, ...)
+		local order = self.levels[level]
 		assert(order, "undefined level `%s'", inspect(level))
 		if order < self.level_order then
 			return
 		end
-		return LOG_MSG(self, level, ...)
+		local f_type = type(fmt)
+		if f_type == 'string' then
+			if select('#', ...) > 0 then
+				local status, msg = pcall(string.format, fmt, ...)
+				if status then
+					return self:append(level, msg)
+				else
+					return self:append(level, "Error formatting log message: " .. msg)
+				end
+			else
+				-- only a single string, no formating needed.
+				return self:append(level, fmt)
+			end
+		elseif f_type == 'function' then
+			-- fmt should be a callable function which returns the message to log
+			return self:append(level, fmt(...))
+		end
+		-- fmt is not a string and not a function, just call inspect() on it.
+		return self:append(level, inspect(fmt))
 	end
 
-	-- initialize log level.
-	logger:setLevel(log4l.DEBUG)
 	return logger
 end
 
