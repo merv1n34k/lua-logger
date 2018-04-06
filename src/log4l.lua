@@ -51,19 +51,6 @@ local function LOG_MSG(self, level, fmt, ...)
 	return self:append(level, inspect(fmt))
 end
 
--- create the proxy functions for each log level.
-local LEVEL_FUNCS = {}
-for i=1,MAX_LEVELS do
-	local level = DEFAULT_LEVELS[i]
-	LEVEL_FUNCS[i] = function(self, ...)
-		-- no level checking needed here, this function will only be called if it's level is active.
-		return LOG_MSG(self, level, ...)
-	end
-end
-
--- do nothing function for disabled levels.
-local function disable_level() end
-
 -- improved assertion function.
 local function assert(exp, ...)
 	-- if exp is true, we are finished so don't do any processing of the parameters
@@ -94,21 +81,12 @@ function log4l.new(append)
 		end
 		self.level = level
 		self.level_order = order
-		-- enable/disable levels
-		for i=1,MAX_LEVELS do
-			local name = DEFAULT_LEVELS[i]:lower()
-			if i >= order then
-				self[name] = LEVEL_FUNCS[i]
-			else
-				self[name] = disable_level
-			end
-		end
 	end
 
 	-- generic log function.
 	logger.log = function (self, level, ...)
-	local order = DEFAULT_LEVELS[level]
-	assert(order, "undefined level `%s'", inspect(level))
+		local order = DEFAULT_LEVELS[level]
+		assert(order, "undefined level `%s'", inspect(level))
 		if order < self.level_order then
 			return
 		end
