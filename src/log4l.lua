@@ -1,7 +1,5 @@
 local inspect = require('inspect')
 
-local _tostring = tostring
-
 local log4l = {}
 
 local DEFAULT_LEVELS = {
@@ -49,8 +47,8 @@ local function LOG_MSG(self, level, fmt, ...)
 		-- fmt should be a callable function which returns the message to log
 		return self:append(level, fmt(...))
 	end
-	-- fmt is not a string and not a function, just call tostring() on it.
-	return self:append(level, log4l.tostring(fmt))
+	-- fmt is not a string and not a function, just call inspect() on it.
+	return self:append(level, inspect(fmt))
 end
 
 -- create the proxy functions for each log level.
@@ -90,7 +88,7 @@ function log4l.new(append)
 
 	logger.setLevel = function (self, level)
 		local order = DEFAULT_LEVELS[level]
-		assert(order, "undefined level `%s'", _tostring(level))
+		assert(order, "undefined level `%s'", inspect(level))
 		if self.level then
 			self:log(log4l.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
 		end
@@ -110,7 +108,7 @@ function log4l.new(append)
 	-- generic log function.
 	logger.log = function (self, level, ...)
 	local order = DEFAULT_LEVELS[level]
-		assert(order, "undefined level `%s'", _tostring(level))
+	assert(order, "undefined level `%s'", inspect(level))
 		if order < self.level_order then
 			return
 		end
@@ -133,86 +131,6 @@ function log4l.prepareLogMsg(pattern, dt, level, message)
 	logMsg = string.gsub(logMsg, "%%level", level)
 	logMsg = string.gsub(logMsg, "%%message", message)
 	return logMsg
-end
-
-
--------------------------------------------------------------------------------
--- Converts a Lua value to a string
---
--- Converts Table fields in alphabetical order
--------------------------------------------------------------------------------
-log4l.tostring = function(value, seen)
-	seen = seen or {}
-	local str = ''
-
-	if (type(value) ~= 'table') then
-		if (type(value) == 'string') then
-			str = string.format("%q", value)
-		else
-			str = _tostring(value)
-		end
-	else
-		local mt = getmetatable(value) or {}
-		if mt.__tostring then
-			return _tostring(value)
-		end
-		if seen[value] then
-			return '...'
-		else
-			seen[value] = true
-		end
-		local strTable = {}
-		local numTable = {}
-		local outOfOrderTable = {}
-		local outOfOrderKeys = {}
-		local otherTable = {}
-		local mapping = {}
-		for k, v in ipairs(value) do
-			numTable[k] = tostring(v, seen)
-		end
-		for k, v in pairs(value) do
-			if type(k) == 'number' then
-				if k < 1 or k > #numTable then
-					outOfOrderTable[k] = tostring(v, seen)
-					table.insert(outOfOrderKeys, k)
-				end
-			elseif type(k) == 'string' then
-				table.insert(strTable, k)
-			else
-				local as_string = tostring(k, seen)
-				mapping[as_string] = mapping[as_string] or {}
-				table.insert(otherTable, as_string)
-				table.insert(mapping[as_string], k)
-			end
-		end
-		table.sort(outOfOrderKeys)
-		table.sort(strTable)
-		table.sort(otherTable)
-
-		str = str..'{'
-		local separator = ""
-		for _, v in ipairs(numTable) do
-			str = str..separator..v
-			separator = ", "
-		end
-		for _, v in ipairs(outOfOrderKeys) do
-			str = str..separator.."["..v.."]".." = "..outOfOrderTable[v]
-			separator = ", "
-		end
-		for _, fieldName in ipairs(strTable) do
-			str = str..separator..fieldName.." = "..tostring(value[fieldName], seen)
-			separator = ", "
-		end
-		for _, fieldName in ipairs(otherTable) do
-			for _, field in ipairs(mapping[fieldName]) do
-				str = str..separator.."["..fieldName.."]".." = "..tostring(value[field], seen)
-				separator = ", "
-			end
-		end
-		str = str..'}'
-	end
-	seen[value] = nil
-	return str
 end
 
 local luamaj, luamin = _VERSION:match("Lua (%d+)%.(%d+)")
