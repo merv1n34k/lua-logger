@@ -5,33 +5,32 @@ local format = string.format
 local pairs = pairs
 local ipairs = ipairs
 
-local log4l = {
+local log4l = {}
 
--- The DEBUG Level designates fine-grained instring.formational events that are most
--- useful to debug an application
-DEBUG = "DEBUG",
-
--- The INFO level designates instring.formational messages that highlight the
--- progress of the application at coarse-grained level
-INFO = "INFO",
-
--- The WARN level designates potentially harmful situations
-WARN = "WARN",
-
--- The ERROR level designates error events that might still allow the
--- application to continue running
-ERROR = "ERROR",
-
--- The FATAL level designates very severe error events that will presumably
--- lead the application to abort
-FATAL = "FATAL",
+local DEFAULT_LEVELS = {
+	-- The highest possible rank and is intended to turn off logging.
+	OFF = "OFF",
+	-- Severe errors that cause premature termination. Expect these to be immediately visible on a status console.
+	FATAL = "FATAL",
+	-- Other runtime errors or unexpected conditions. Expect these to be immediately visible on a status console.
+	ERROR = "ERROR",
+	-- Use of deprecated APIs, poor use of API, 'almost' errors, other runtime situations that are undesirable or
+	-- unexpected, but not necessarily "wrong". Expect these to be immediately visible on a status console.
+	WARN = "WARN",
+	-- Interesting runtime events (startup/shutdown). Expect these to be immediately visible on a console, so be
+	-- conservative and keep to a minimum.
+	INFO = "INFO",
+	-- Detailed information on the flow through the system. Expect these to be written to logs only. Generally speaking,
+	-- most lines logged by your application should be written as DEBUG.
+	DEBUG = "DEBUG",
+	-- Most detailed information. Expect these to be written to logs only
+	TRACE = "TRACE"
 }
 
-local LEVEL = {"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
-local MAX_LEVELS = #LEVEL
+local MAX_LEVELS = #DEFAULT_LEVELS
 -- make level names to order
 for i=1,MAX_LEVELS do
-	LEVEL[LEVEL[i]] = i
+	DEFAULT_LEVELS[DEFAULT_LEVELS[i]] = i
 end
 
 -- private log function, with support for formating a complex log message.
@@ -60,7 +59,7 @@ end
 -- create the proxy functions for each log level.
 local LEVEL_FUNCS = {}
 for i=1,MAX_LEVELS do
-	local level = LEVEL[i]
+	local level = DEFAULT_LEVELS[i]
 	LEVEL_FUNCS[i] = function(self, ...)
 		-- no level checking needed here, this function will only be called if it's level is active.
 		return LOG_MSG(self, level, ...)
@@ -93,7 +92,7 @@ function log4l.new(append)
 	logger.append = append
 
 	logger.setLevel = function (self, level)
-		local order = LEVEL[level]
+		local order = DEFAULT_LEVELS[level]
 		assert(order, "undefined level `%s'", _tostring(level))
 		if self.level then
 			self:log(log4l.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
@@ -102,7 +101,7 @@ function log4l.new(append)
 		self.level_order = order
 		-- enable/disable levels
 		for i=1,MAX_LEVELS do
-			local name = LEVEL[i]:lower()
+			local name = DEFAULT_LEVELS[i]:lower()
 			if i >= order then
 				self[name] = LEVEL_FUNCS[i]
 			else
@@ -113,7 +112,7 @@ function log4l.new(append)
 
 	-- generic log function.
 	logger.log = function (self, level, ...)
-		local order = LEVEL[level]
+	local order = DEFAULT_LEVELS[level]
 		assert(order, "undefined level `%s'", _tostring(level))
 		if order < self.level_order then
 			return
