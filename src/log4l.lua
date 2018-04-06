@@ -1,13 +1,3 @@
--------------------------------------------------------------------------------
--- includes a new tostring function that handles tables recursively
---
--- @author Danilo Tuler (tuler@ideais.com.br)
--- @author Andre Carregal (info@keplerproject.org)
--- @author Thiago Costa Ponte (thiago@ideais.com.br)
---
--- @copyright 2004-2013 Kepler Project
--------------------------------------------------------------------------------
-
 local type, table, string, _tostring, tonumber = type, table, string, tostring, tonumber
 local select = select
 local error = error
@@ -15,13 +5,9 @@ local format = string.format
 local pairs = pairs
 local ipairs = ipairs
 
-local logging = {
+local log4l = {
 
 -- Meta information
-_COPYRIGHT = "Copyright (C) 2004-2013 Kepler Project",
-_DESCRIPTION = "A simple API to use logging features in Lua",
-_VERSION = "LuaLogging 1.3.0",
-
 -- The DEBUG Level designates fine-grained instring.formational events that are most
 -- useful to debug an application
 DEBUG = "DEBUG",
@@ -69,7 +55,7 @@ local function LOG_MSG(self, level, fmt, ...)
 		return self:append(level, fmt(...))
 	end
 	-- fmt is not a string and not a function, just call tostring() on it.
-	return self:append(level, logging.tostring(fmt))
+	return self:append(level, log4l.tostring(fmt))
 end
 
 -- create the proxy functions for each log level.
@@ -99,7 +85,7 @@ end
 --	log-level to the log stream.
 -- @return Table representing the new logger object.
 -------------------------------------------------------------------------------
-function logging.new(append)
+function log4l.new(append)
 	if type(append) ~= "function" then
 		return nil, "Appender must be a function."
 	end
@@ -111,7 +97,7 @@ function logging.new(append)
 		local order = LEVEL[level]
 		assert(order, "undefined level `%s'", _tostring(level))
 		if self.level then
-			self:log(logging.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
+			self:log(log4l.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
 		end
 		self.level = level
 		self.level_order = order
@@ -137,7 +123,7 @@ function logging.new(append)
 	end
 
 	-- initialize log level.
-	logger:setLevel(logging.DEBUG)
+	logger:setLevel(log4l.DEBUG)
 	return logger
 end
 
@@ -145,7 +131,7 @@ end
 -------------------------------------------------------------------------------
 -- Prepares the log message
 -------------------------------------------------------------------------------
-function logging.prepareLogMsg(pattern, dt, level, message)
+function log4l.prepareLogMsg(pattern, dt, level, message)
 	local logMsg = pattern or "%date %level %message\n"
 	message = string.gsub(message, "%%", "%%%%")
 	logMsg = string.gsub(logMsg, "%%date", dt)
@@ -207,7 +193,7 @@ local function tostring(value, seen)
 		table.sort(outOfOrderKeys)
 		table.sort(strTable)
 		table.sort(otherTable)
-	
+
 		str = str..'{'
 		local separator = ""
 		for _, v in ipairs(numTable) do
@@ -233,12 +219,12 @@ local function tostring(value, seen)
 	seen[value] = nil
 	return str
 end
-logging.tostring = tostring
+log4l.tostring = tostring
 
 local luamaj, luamin = _VERSION:match("Lua (%d+)%.(%d+)")
 if tonumber(luamaj) == 5 and tonumber(luamin) < 2 then
-	-- still create 'logging' global for Lua versions < 5.2
-	_G.logging = logging
+	-- still create 'log4l' global for Lua versions < 5.2
+	_G.log4l = log4l
 end
 
-return logging
+return log4l
