@@ -1,9 +1,4 @@
-local type, table, string, _tostring, tonumber = type, table, string, tostring, tonumber
-local select = select
-local error = error
-local format = string.format
-local pairs = pairs
-local ipairs = ipairs
+local _tostring = tostring
 
 local log4l = {}
 
@@ -38,7 +33,7 @@ local function LOG_MSG(self, level, fmt, ...)
 	local f_type = type(fmt)
 	if f_type == 'string' then
 		if select('#', ...) > 0 then
-			local status, msg = pcall(format, fmt, ...)
+			local status, msg = pcall(string.format, fmt, ...)
 			if status then
 				return self:append(level, msg)
 			else
@@ -74,7 +69,7 @@ local function assert(exp, ...)
 	-- if exp is true, we are finished so don't do any processing of the parameters
 	if exp then return exp, ... end
 	-- assertion failed, raise error
-	error(format(...), 2)
+	error(string.format(...), 2)
 end
 
 -------------------------------------------------------------------------------
