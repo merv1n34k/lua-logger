@@ -22,12 +22,6 @@ local DEFAULT_LEVELS = {
 	TRACE = "TRACE"
 }
 
-local MAX_LEVELS = #DEFAULT_LEVELS
--- make level names to order
-for i=1,MAX_LEVELS do
-	DEFAULT_LEVELS[DEFAULT_LEVELS[i]] = i
-end
-
 -- improved assertion function.
 local function assert(exp, ...)
 	-- if exp is true, we are finished so don't do any processing of the parameters
@@ -42,7 +36,7 @@ end
 --	log-level to the log stream.
 -- @return Table representing the new logger object.
 -------------------------------------------------------------------------------
-function log4l.new(append)
+function log4l.new(append, settings)
 	if type(append) ~= "function" then
 		return nil, "Appender must be a function."
 	end
@@ -50,8 +44,19 @@ function log4l.new(append)
 	local logger = {}
 	logger.append = append
 
+	-- initialize levels
+	if settings.levels then
+		logger.levels = settings.levels
+	else
+		logger.levels = DEFAULT_LEVELS
+	end
+	-- make level names to order
+	for i = 1,#logger.levels do
+		logger.levels[logger.levels[i]] = i
+	end
+
 	function logger:setLevel(level)
-		local order = DEFAULT_LEVELS[level]
+		local order = logger.levels[level]
 		assert(order, "undefined level `%s'", inspect(level))
 		if self.level then
 			self:log(log4l.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
@@ -60,7 +65,11 @@ function log4l.new(append)
 		self.level_order = order
 	end
 	-- initialize log level.
-	logger:setLevel(log4l.DEBUG)
+	if settings.init.level then
+		logger:setLevel(settings.init.level)
+	else
+		logger:setLevel(logger.levels.DEBUG)
+	end
 
 	-- generic log function.
 	function logger:log(level, fmt, ...)
