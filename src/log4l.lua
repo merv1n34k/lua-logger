@@ -88,10 +88,10 @@ function log4l.new(append, settings)
 		end
 	end
 
-	function logger:setLevel(level)
+	function logger:setLevel(level, silent)
 		local order = logger.levels[level]
 		assert(order, "undefined level `%s'", inspect(level))
-		if self.level then
+		if self.level and silent == false then
 			self:log(log4l.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
 		end
 		self.level = level
@@ -108,9 +108,9 @@ function log4l.new(append, settings)
 	end
 	-- initialize log level.
 	if settings.init.level then
-		logger:setLevel(settings.init.level)
+		logger:setLevel(settings.init.level, settings.init.silent)
 	else
-		logger:setLevel(logger.levels.DEBUG)
+		logger:setLevel(logger.levels.DEBUG, settings.init.silent)
 	end
 
 	-- generic log function.
