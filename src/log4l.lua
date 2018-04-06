@@ -77,6 +77,16 @@ function log4l.new(append, settings)
 	for i = 1,#logger.levels do
 		logger.levels[logger.levels[i]] = i
 	end
+	-- create proxy functions
+	local level_funcs = {}
+	for i = 1,#logger.levels do
+		local level = logger.levels[i]
+		level_funcs[i] = function(self, ...)
+			-- no level checking needed here, this function will only be called
+			-- if it's level is active.
+			return log_msg(self, level, ...)
+		end
+	end
 
 	function logger:setLevel(level)
 		local order = logger.levels[level]
@@ -86,6 +96,15 @@ function log4l.new(append, settings)
 		end
 		self.level = level
 		self.level_order = order
+		-- enable/disable levels
+		for i = 1,#logger.levels do
+			local name = self.levels[i]:lower()
+			if i >= order then
+				self[name] = level_funcs[i]
+			else
+				self[name] = function () return end
+			end
+		end
 	end
 	-- initialize log level.
 	if settings.init.level then
