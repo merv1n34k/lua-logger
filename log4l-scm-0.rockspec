@@ -17,7 +17,8 @@ console, file, rolling file, email, socket and SQL outputs.
 }
 dependencies = {
     "lua >= 5.1, < 5.4",
-    "luasocket"
+    "luasocket",
+    "inspect"
 }
 build   = {
     type        = "none",

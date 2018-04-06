@@ -1,3 +1,5 @@
+local inspect = require('inspect')
+
 local _tostring = tostring
 
 local log4l = {}
@@ -139,7 +141,7 @@ end
 --
 -- Converts Table fields in alphabetical order
 -------------------------------------------------------------------------------
-local function tostring(value, seen)
+log4l.tostring = function(value, seen)
 	seen = seen or {}
 	local str = ''
 
@@ -212,7 +214,6 @@ local function tostring(value, seen)
 	seen[value] = nil
 	return str
 end
-log4l.tostring = tostring
 
 local luamaj, luamin = _VERSION:match("Lua (%d+)%.(%d+)")
 if tonumber(luamaj) == 5 and tonumber(luamin) < 2 then
