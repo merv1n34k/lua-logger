@@ -29,11 +29,6 @@ With LuaRocks:
 
 	$ sudo luarocks install https://github.com/mwchase/log4l/raw/log4l/log4l-scm-0.rockspec
 
-With make:
-
-	$ sudo make
-
-
 Guide lines for improved logging performance
 ============================================
 
