@@ -45,14 +45,6 @@ local function log_msg(self, level, fmt, ...)
 	return self:append(level, inspect(fmt))
 end
 
--- improved assertion function.
-local function assert(exp, ...)
-	-- if exp is true, we are finished so don't do any processing of the parameters
-	if exp then return exp, ... end
-	-- assertion failed, raise error
-	error(string.format(...), 2)
-end
-
 -------------------------------------------------------------------------------
 -- Creates a new logger object
 -- @param append Function used by the logger to append a message with a
@@ -94,7 +86,6 @@ function log4l.new(append, settings)
 			end
 			order = index[level]
 		end
-		assert(order, "undefined level `%s'", inspect(level))
 		if self.level and silent == false then
 			self:log("WARN", "Logger: changing loglevel from %s to %s", self.level, level)
 		end
@@ -130,7 +121,6 @@ function log4l.new(append, settings)
 			end
 			order = index[level]
 		end
-		assert(order, "undefined level `%s'", inspect(level))
 		if order < self.level_order then
 			return
 		end
