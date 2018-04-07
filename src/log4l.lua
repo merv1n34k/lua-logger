@@ -4,27 +4,23 @@ local log4l = {}
 
 local DEFAULT_LEVELS = {
 	-- The highest possible rank and is intended to turn off logging.
-	OFF = "OFF",
+	"OFF",
 	-- Severe errors that cause premature termination. Expect these to be immediately visible on a status console.
-	FATAL = "FATAL",
+	"FATAL",
 	-- Other runtime errors or unexpected conditions. Expect these to be immediately visible on a status console.
-	ERROR = "ERROR",
+	"ERROR",
 	-- Use of deprecated APIs, poor use of API, 'almost' errors, other runtime situations that are undesirable or
 	-- unexpected, but not necessarily "wrong". Expect these to be immediately visible on a status console.
-	WARN = "WARN",
+	"WARN",
 	-- Interesting runtime events (startup/shutdown). Expect these to be immediately visible on a console, so be
 	-- conservative and keep to a minimum.
-	INFO = "INFO",
+	"INFO",
 	-- Detailed information on the flow through the system. Expect these to be written to logs only. Generally speaking,
 	-- most lines logged by your application should be written as DEBUG.
-	DEBUG = "DEBUG",
+	"DEBUG",
 	-- Most detailed information. Expect these to be written to logs only
-	TRACE = "TRACE"
+	"TRACE"
 }
--- make level names to order
-for i = 1,#DEFAULT_LEVELS do
-	DEFAULT_LEVELS[DEFAULT_LEVELS[i]] = i
-end
 
 -- private log function, with support for formating a complex log message.
 local function log_msg(self, level, fmt, ...)
@@ -79,7 +75,7 @@ function log4l.new(append, settings)
 		__index = {
 			levels = DEFAULT_LEVELS,
 			init = {
-				level = DEFAULT_LEVELS.DEBUG,
+				level = DEFAULT_LEVELS[6],
 				silent = false
 			}
 		}
@@ -98,10 +94,20 @@ function log4l.new(append, settings)
 	end
 
 	function logger:setLevel(level, silent)
-		local order = logger.levels[level]
+		local order
+		if type(level) == "number" then
+			order = level
+			level = logger.levels[order]
+		elseif type(level) == "string" then
+			local index = {}
+			for k,v in pairs(logger.levels) do
+				index[v] = k
+			end
+			order = index[level]
+		end
 		assert(order, "undefined level `%s'", inspect(level))
 		if self.level and silent == false then
-			self:log(log4l.WARN, "Logger: changing loglevel from %s to %s", self.level, level)
+			self:log("WARN", "Logger: changing loglevel from %s to %s", self.level, level)
 		end
 		self.level = level
 		self.level_order = order
@@ -120,7 +126,17 @@ function log4l.new(append, settings)
 
 	-- generic log function.
 	function logger:log(level, ...)
-		local order = self.levels[level]
+		local order
+		if type(level) == "number" then
+			order = level
+			level = logger.levels[order]
+		elseif type(level) == "string" then
+			local index = {}
+			for k,v in pairs(logger.levels) do
+				index[v] = k
+			end
+			order = index[level]
+		end
 		assert(order, "undefined level `%s'", inspect(level))
 		if order < self.level_order then
 			return
@@ -128,9 +144,9 @@ function log4l.new(append, settings)
 		return log_msg(self, level, ...)
 	end
 
+
 	return logger
 end
-
 
 -------------------------------------------------------------------------------
 -- Prepares the log message
