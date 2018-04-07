@@ -21,6 +21,10 @@ local DEFAULT_LEVELS = {
 	-- Most detailed information. Expect these to be written to logs only
 	TRACE = "TRACE"
 }
+-- make level names to order
+for i = 1,#DEFAULT_LEVELS do
+	DEFAULT_LEVELS[DEFAULT_LEVELS[i]] = i
+end
 
 -- private log function, with support for formating a complex log message.
 local function log_msg(self, level, fmt, ...)
@@ -67,16 +71,21 @@ function log4l.new(append, settings)
 	local logger = {}
 	logger.append = append
 
-	-- initialize levels
-	if settings.levels then
-		logger.levels = settings.levels
-	else
-		logger.levels = DEFAULT_LEVELS
+	-- initialize all default values
+	if not settings then
+		settings = {}
 	end
-	-- make level names to order
-	for i = 1,#logger.levels do
-		logger.levels[logger.levels[i]] = i
-	end
+	setmetatable(settings, {
+		__index = {
+			levels = DEFAULT_LEVELS,
+			init = {
+				level = DEFAULT_LEVELS.DEBUG,
+				silent = false
+			}
+		}
+	})
+	logger.levels = settings.levels
+
 	-- create proxy functions
 	local level_funcs = {}
 	for i = 1,#logger.levels do
@@ -107,11 +116,7 @@ function log4l.new(append, settings)
 		end
 	end
 	-- initialize log level.
-	if settings.init.level then
-		logger:setLevel(settings.init.level, settings.init.silent)
-	else
-		logger:setLevel(logger.levels.DEBUG, settings.init.silent)
-	end
+	logger:setLevel(settings.init.level, settings.init.silent)
 
 	-- generic log function.
 	function logger:log(level, ...)
