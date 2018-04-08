@@ -1,5 +1,3 @@
-local inspect = require('inspect')
-
 local log4l = {}
 
 local DEFAULT_LEVELS = {
@@ -21,29 +19,6 @@ local DEFAULT_LEVELS = {
 	-- Most detailed information. Expect these to be written to logs only
 	"TRACE"
 }
-
--- private log function, with support for formating a complex log message.
-local function log_msg(self, level, fmt, ...)
-	local f_type = type(fmt)
-	if f_type == 'string' then
-		if select('#', ...) > 0 then
-			local status, msg = pcall(string.format, fmt, ...)
-			if status then
-				return self:append(level, msg)
-			else
-				return self:append(level, "Error formatting log message: " .. msg)
-			end
-		else
-			-- only a single string, no formating needed.
-			return self:append(level, fmt)
-		end
-	elseif f_type == 'function' then
-		-- fmt should be a callable function which returns the message to log
-		return self:append(level, fmt(...))
-	end
-	-- fmt is not a string and not a function, just call inspect() on it.
-	return self:append(level, inspect(fmt))
-end
 
 -------------------------------------------------------------------------------
 -- Creates a new logger object
@@ -87,29 +62,16 @@ function log4l.new(append, settings)
 			order = index[level]
 		end
 		if self.level and silent == false then
-			self:log("WARN", "Logger: changing loglevel from %s to %s", self.level, level)
+			self:log("WARN", "Logger: changing loglevel from " .. self.level .. " to " .. level)
 		end
 		self.level = level
 		self.level_order = order
-		-- enable/disable levels
-		for i = 1,#logger.levels do
-			local name = self.levels[i]:lower()
-			if i >= order then
-				self[name] = function(...)
-					-- no level checking needed here, this function will only be called
-					-- if it's level is active.
-					return log_msg(self, self.level, ...)
-				end
-			else
-				self[name] = function () return end
-			end
-		end
 	end
 	-- initialize log level.
 	logger:setLevel(settings.init.level, settings.init.silent)
 
 	-- generic log function.
-	function logger:log(level, ...)
+	function logger:log(level, msg)
 		local order
 		if type(level) == "number" then
 			order = level
@@ -123,10 +85,10 @@ function log4l.new(append, settings)
 		end
 		if order < self.level_order then
 			return
+		else
+			return self:append(level, msg)
 		end
-		return log_msg(self, level, ...)
 	end
-
 
 	return logger
 end
