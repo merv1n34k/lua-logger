@@ -53,10 +53,10 @@ function log4l.new(append, settings)
 		local order
 		if type(level) == "number" then
 			order = level
-			level = logger.levels[order]
+			level = self.levels[order]
 		elseif type(level) == "string" then
 			local index = {}
-			for k,v in pairs(logger.levels) do
+			for k,v in pairs(self.levels) do
 				index[v] = k
 			end
 			order = index[level]
@@ -75,10 +75,10 @@ function log4l.new(append, settings)
 		local order
 		if type(level) == "number" then
 			order = level
-			level = logger.levels[order]
+			level = self.levels[order]
 		elseif type(level) == "string" then
 			local index = {}
-			for k,v in pairs(logger.levels) do
+			for k,v in pairs(self.levels) do
 				index[v] = k
 			end
 			order = index[level]
