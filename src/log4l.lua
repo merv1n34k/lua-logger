@@ -20,6 +20,14 @@ local DEFAULT_LEVELS = {
 	"TRACE"
 }
 
+local function indexof(val, t)
+	local index = {}
+	for k,v in pairs(t) do
+		index[v] = k
+	end
+	return index[val]
+end
+
 -------------------------------------------------------------------------------
 -- Creates a new logger object
 -- @param append Function used by the logger to append a message with a
@@ -55,11 +63,7 @@ function log4l.new(append, settings)
 			order = level
 			level = self.levels[order]
 		elseif type(level) == "string" then
-			local index = {}
-			for k,v in pairs(self.levels) do
-				index[v] = k
-			end
-			order = index[level]
+			order = indexof(level, self.levels)
 		end
 		if self.level and silent == false then
 			self:log("WARN", "Logger: changing loglevel from " .. self.level .. " to " .. level)
@@ -77,11 +81,7 @@ function log4l.new(append, settings)
 			order = level
 			level = self.levels[order]
 		elseif type(level) == "string" then
-			local index = {}
-			for k,v in pairs(self.levels) do
-				index[v] = k
-			end
-			order = index[level]
+			order = indexof(level, self.levels)
 		end
 		if order < self.level_order then
 			return
