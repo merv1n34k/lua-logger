@@ -60,6 +60,12 @@ return function(append, settings)
 		elseif type(level) == "string" then
 			order = indexof(level, self.levels)
 		end
+		if not level then
+			return
+		end
+		if not order then
+			return
+		end
 		self.level = level
 		self.level_order = order
 	end
