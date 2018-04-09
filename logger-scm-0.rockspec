@@ -16,7 +16,6 @@ based on log4j and it was forked from log4l by @mwchase.
 }
 dependencies = {
     "lua >= 5.1, < 5.4",
-    "luasocket"
 }
 build   = {
     type    = "none",
