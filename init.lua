@@ -47,15 +47,12 @@ return function(append, settings)
 	setmetatable(settings, {
 		__index = {
 			levels = DEFAULT_LEVELS,
-			init = {
-				level = DEFAULT_LEVELS[6],
-				silent = false
-			}
+			init_level = DEFAULT_LEVELS[6]
 		}
 	})
 	logger.levels = settings.levels
 
-	function logger:setLevel(level, silent)
+	function logger:setLevel(level)
 		local order
 		if type(level) == "number" then
 			order = level
@@ -63,14 +60,11 @@ return function(append, settings)
 		elseif type(level) == "string" then
 			order = indexof(level, self.levels)
 		end
-		if self.level and silent == false then
-			self:log("WARN", "Logger: changing loglevel from " .. self.level .. " to " .. level)
-		end
 		self.level = level
 		self.level_order = order
 	end
 	-- initialize log level.
-	logger:setLevel(settings.init.level, settings.init.silent)
+	logger:setLevel(settings.init_level)
 
 	-- generic log function.
 	function logger:log(level, msg)
