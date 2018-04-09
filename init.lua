@@ -88,5 +88,12 @@ return function(append, settings)
 		end
 	end
 
+	-- Per level function.
+	for _,l in pairs(logger.levels) do
+		logger[l:lower()] = function(self, msg)
+			return self:log(l, msg)
+		end
+	end
+
 	return logger
 end
