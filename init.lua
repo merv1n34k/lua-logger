@@ -1,5 +1,3 @@
-local log4l = {}
-
 local DEFAULT_LEVELS = {
 	-- The highest possible rank and is intended to turn off logging.
 	"OFF",
@@ -34,7 +32,7 @@ end
 --	log-level to the log stream.
 -- @return Table representing the new logger object.
 -------------------------------------------------------------------------------
-function log4l.new(append, settings)
+return function(append, settings)
 	if type(append) ~= "function" then
 		return nil, "Appender must be a function."
 	end
@@ -92,23 +90,3 @@ function log4l.new(append, settings)
 
 	return logger
 end
-
--------------------------------------------------------------------------------
--- Prepares the log message
--------------------------------------------------------------------------------
-function log4l.prepareLogMsg(pattern, dt, level, message)
-	local logMsg = pattern or "%date %level %message\n"
-	message = string.gsub(message, "%%", "%%%%")
-	logMsg = string.gsub(logMsg, "%%date", dt)
-	logMsg = string.gsub(logMsg, "%%level", level)
-	logMsg = string.gsub(logMsg, "%%message", message)
-	return logMsg
-end
-
-local luamaj, luamin = _VERSION:match("Lua (%d+)%.(%d+)")
-if tonumber(luamaj) == 5 and tonumber(luamin) < 2 then
-	-- still create 'log4l' global for Lua versions < 5.2
-	_G.log4l = log4l
-end
-
-return log4l

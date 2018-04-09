@@ -1,15 +1,6 @@
--------------------------------------------------------------------------------
--- Saves the log4l information in a table using luasql
---
--- @author Thiago Costa Ponte (thiago@ideais.com.br)
---
--- @copyright 2004-2013 Kepler Project
---
--------------------------------------------------------------------------------
+local logger = require"logger"
 
-local log4l = require"log4l"
-
-function log4l.sql(params)
+function logger.sql(params)
 	params = params or {}
 	params.tablename = params.tablename or "LogTable"
 	params.logdatefield = params.logdatefield or "LogDate"
@@ -26,7 +17,7 @@ function log4l.sql(params)
 		con, err = params.connectionfactory()
 	end
 
-	return log4l.new( function(self, level, message)
+	return logger( function(self, level, message)
 		if (not params.keepalive) or (con == nil) then
 			con, err = params.connectionfactory()
 			if not con then
@@ -59,5 +50,5 @@ function log4l.sql(params)
 	end)
 end
 
-return log4l.sql
+return logger.sql
 

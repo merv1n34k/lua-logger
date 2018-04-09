@@ -1,14 +1,4 @@
----------------------------------------------------------------------------
--- RollingFileAppender is a FileAppender that rolls over the logfile
--- once it has reached a certain size limit. It also mantains a
--- maximum number of log files.
---
--- @author Tiago Cesar Katcipis (tiagokatcipis@gmail.com)
---
--- @copyright 2004-2013 Kepler Project
----------------------------------------------------------------------------
-
-local log4l = require"log4l"
+local logger = require"logger"
 
 local function openFile(self)
 	self.file = io.open(self.filename, "a")
@@ -53,9 +43,9 @@ local openRollingFileLogger = function (self)
 end
 
 
-function log4l.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern, datePattern)
+function logger.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern, datePattern)
 	if type(filename) ~= "string" then
-		filename = "lualog4l.log"
+		filename = "lualogger.log"
 	end
 
 	local obj = {
@@ -64,16 +54,16 @@ function log4l.rolling_file(filename, maxFileSize, maxBackupIndex, logPattern, d
 		maxIndex = maxBackupIndex or 1
 	}
 
-	return log4l.new( function(self, level, message)
+	return logger( function(self, level, message)
 		local f, msg = openRollingFileLogger(obj)
 		if not f then
 			return nil, msg
 		end
-		local s = log4l.prepareLogMsg(logPattern, os.date(datePattern), level, message)
+		local s = logger.prepareLogMsg(logPattern, os.date(datePattern), level, message)
 		f:write(s)
 		return true
 	end)
 end
 
-return log4l.rolling_file
+return logger.rolling_file
 
