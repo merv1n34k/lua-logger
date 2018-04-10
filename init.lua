@@ -81,10 +81,10 @@ return function(append, settings)
 		elseif type(level) == "string" then
 			order = indexof(level, self.levels)
 		end
-		if order < self.level_order then
-			return
-		else
+		if order <= self.level_order then
 			return self:append(level, msg)
+		else
+			return
 		end
 	end
 
