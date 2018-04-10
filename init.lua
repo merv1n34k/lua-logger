@@ -52,6 +52,15 @@ return function(append, settings)
 	})
 	logger.levels = settings.levels
 
+	-- Per level function.
+	for _,l in pairs(logger.levels) do
+		if type(l) == 'string' then
+			logger[l:lower()] = function(self, msg)
+				return self:log(l, msg)
+			end
+		end
+	end
+
 	function logger:setLevel(level)
 		local order
 		if type(level) == "number" then
@@ -85,13 +94,6 @@ return function(append, settings)
 			return self:append(level, msg)
 		else
 			return
-		end
-	end
-
-	-- Per level function.
-	for _,l in pairs(logger.levels) do
-		logger[l:lower()] = function(self, msg)
-			return self:log(l, msg)
 		end
 	end
 
