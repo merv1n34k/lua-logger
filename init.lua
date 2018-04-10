@@ -41,7 +41,7 @@ return function(append, settings)
 	logger.append = append
 
 	-- initialize all default values
-	if not settings then
+	if type(settings) ~= "table" then
 		settings = {}
 	end
 	setmetatable(settings, {
