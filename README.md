@@ -17,7 +17,7 @@ luarocks install logger
 
 ## Usage
 
-Basically, when creating a logger object, you need to give the constructor a function called the `appender`. This function, receives `(self, level, message)` is taking care of actually printing the log messages to the console, writing the `message` to a file / SQL database, email it to your INBOX or whatever you want. The `level` parameter is specifying the log level on which the message is supposed to be appended.
+Basically, when creating a logger object, you need to give the constructor a function called the `appender`. This function, receives `(self, level, message)` is taking care of actually printing the log messages to the console, writing the `message` to a file / SQL database, email it to your INBOX or whatever you decide to do with it. The `level` parameter is specifying the log level on which the message was sent.
 
 ### The appender function
 
@@ -39,7 +39,7 @@ myLogger:info('another unprinted info message')
 
 You can put anything you want in the appender function, you can write to a file, you can use different colors when writing it to the console for different log levels, you can write to different files different messages..
 
-The basic idea though behined the design of every `myLogger:<function>` is to make sure you don't append a message which it's log level
+The basic idea though behind the design of every `myLogger:<function>` is to make sure you don't append a message which it's log level
 
 The `self` object, being the first argument to the function, consists of several non-function parameters with these default values.
 
@@ -52,8 +52,6 @@ The `self` object, being the first argument to the function, consists of several
 ```
 
 ### Configuration
-
-#### Initialization
 
 You can modify several settings when constructing a logger object through the use of a 2nd argument to the `logger` function. Currently, the following settings are read:
 
@@ -89,12 +87,12 @@ For this particular case, the functions `myLogger:fatal()`, `myLogger:error()`, 
 myLogger["my-really-spcial-level"]("my really special log message")
 ```
 
-That's missing the whole point of the per-level functions. In addition, if a log level is not a string, a per level function for it will not be created, for obvious reasons.
+That's missing the whole point of per-level functions. In addition, if a log level is not a string, a per-level function for it will not be created, for obvious reasons.
 
-#### Changing the log level
+### Changing the log level
 
-If you want to change the current log level, don't use `myLogger.level = "NEW_LEVEL"`, it's not recommended since it doesn't check the requested level is a member of `myLogger.levels` and it doesn't make sure you update `myLogger:setLevel` which receives a number or a member of the `myLogger.levels` array. If it receives a number it should indicate the index of the log level which should be chosen.
+If you want to change the current log level, don't use `myLogger.level = "NEW_LEVEL"`, it's not recommended since it doesn't check the requested level is a member of `myLogger.levels` and it doesn't make sure you update `myLogger.level_order` along with it. Use `myLogger:setLevel` instead, it receives a number or a member of the array `myLogger.levels`. If you are using a number then it should designate the index of the log level which should be chosen.
 
 ## Examples
 
-There are examples under [`examples/`](examples/).
+See [`examples/`](examples/).
