@@ -21,7 +21,7 @@ build   = {
     type    = "none",
     install = {
         lua = {
-            ['logger'] = "init.lua",
+            ['logger'] = "logger.lua",
         }
     }
 }
