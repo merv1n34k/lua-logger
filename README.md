@@ -2,8 +2,8 @@
 
 ## About
 
-Lua-logger is a fork of [LuaLogging](http://neopallium.github.com/lualogging/) which is a port of Log4j upon which it's design was based. The name of the module was changed by [@mwchase](https://github.com/mwchase) in his fork to [`log4l`](https://github.com/mwchase/log4l) to indicate the differences and to assimilate other ports' names of [Lua4j](https://en.wikipedia.org/wiki/Log4j#Ports) for other languages.
-I took [@mwchase's version](https://github.com/mwchase/log4l) and made so many changes I decided to publish it under my own domain and calling my luarock `logger`.
+Lua-logger is a fork of [LuaLogging](http://neopallium.github.com/lualogging/) which is a port of Log4j upon which it's design was based. The name of the module was changed by [@mwchase](https://github.com/mwchase) in his fork to [`log4l`](https://github.com/mwchase/log4l) to indicate the differences and to assimilate other [Log4j ports'](https://en.wikipedia.org/wiki/Log4j#Ports) names.
+I took [@mwchase's version](https://github.com/mwchase/log4l) and made so many changes I decided to publish it under my own domain. I decided to change the name as well and I called the [luarock](http://luarocks.org/) `logger`.
 
 This is free software and uses the same license as Lua.
 
@@ -17,17 +17,11 @@ luarocks install logger
 
 ## Usage
 
-Basically, when creating a logger object, you need to give the constructor a function called the `appender`. This function, receives `(self, level, message)` is taking care of actually printing the log messages to the console, writing the `message` to a file / SQL database, email it to your INBOX or whatever you decide to do with it. The `level` parameter is specifying the log level on which the message was sent.
-
-### The appender function
-
-A super basic example of using the logger constructor with a simple appender function could be this:
+Quick example:
 
 ```lua
-logger = require('logger')
-myLogger = logger(function(self, level, message)
-  io.stdout:write(level .. "\t" .. message .. "\n")
-end)
+Logger = require('logger')
+myLogger = Logger()
 
 myLogger:debug('started logging stuff')
 myLogger:info('this is just an info message')
@@ -37,62 +31,81 @@ myLogger:debug('this debug message should not be printed')
 myLogger:info('another unprinted info message')
 ```
 
-You can put anything you want in the appender function, you can write to a file, you can use different colors when writing it to the console for different log levels, you can write to different files different messages..
+Requiring the `logger` module returns a logger 'constructor'. There are 2 parameters the constructor accepts:
 
-The basic idea though behind the design of every `myLogger:<function>` is to make sure you don't append a message which it's log level
+- Appender function
+- Settings table
 
-The `self` object, being the first argument to the function, consists of several non-function parameters with these default values.
+For example, it may accept these parameters like this:
 
 ```lua
-{
-  level = "DEBUG",
-  level_order = 6,
-  levels = { "OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE" },
+Logger = require('logger')
+myLoggerSettings = {
+  -- ...
+}
+myLoggerAppender = function(self, level, message)
+end
+myLogger = Logger(myLoggerAppender, myLoggerSettings)
+
+-- ...
+```
+
+### The appender function
+
+The appender function should have this signature:
+
+```lua
+function(self, level, message)
+end
+```
+
+- `self` is the logger object himself.
+- `level` is a string representation of the log level of the message.
+- `message` is the message itself.
+
+The default function prints the message to `io.stderr` along with indicating the log level but you can write your own function that will do whatever you want - append entries to a SQL database, send messages via email etc..
+
+You can also check for the current level of the logger in the appender function using `self.level`. This variable is a string representation of the log level. The default log levels are:
+
+```
+local DEFAULT_LEVELS = {
+	-- The highest possible rank and is intended to turn off logging.
+	"OFF",
+	-- Severe errors that cause premature termination. Expect these to be immediately visible on a status console.
+	"FATAL",
+	-- Other runtime errors or unexpected conditions. Expect these to be immediately visible on a status console.
+	"ERROR",
+	-- Use of deprecated APIs, poor use of API, 'almost' errors, other runtime situations that are undesirable or
+	-- unexpected, but not necessarily "wrong". Expect these to be immediately visible on a status console.
+	"WARN",
+	-- Interesting runtime events (startup/shutdown). Expect these to be immediately visible on a console, so be
+	-- conservative and keep to a minimum.
+	"INFO",
+	-- Detailed information on the flow through the system. Expect these to be written to logs only. Generally speaking,
+	-- most lines logged by your application should be written as DEBUG.
+	"DEBUG",
+	-- Most detailed information. Expect these to be written to logs only
+	"TRACE"
 }
 ```
 
-### Configuration
+The order makes a difference: The index of Level `"OFF"` is `6` and level `"TRACE"`'s index is `1` - **The lowest the number is - the more detailed the message**. This design is Similar to that of Python's Logger, see [this table](https://docs.python.org/3/library/logging.html#logging-levels).
 
-You can modify several settings when constructing a logger object through the use of a 2nd argument to the `logger` function. Currently, the following settings are read:
+Note that like `self.level`, `self.level_order` represents the numerical order of the logger's current log level.
 
-```lua
-{
-  levels = {} -- the different log levels which should be avaiable when creating a logger (usually strings)
-  init_level = -- the log level with which the constructor should start (usually a string as well) 
-}
-```
+### The settings table
 
-So for example, in order to use the default `levels` of `{ "OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE" }`, but set the initial log level to `"ERROR"` and not `"DEBUG"`, use something like this:
+As noted above, the constructor accepts a second parameter which is the settings table. This table may consist of 2 inner objects:
 
-```lua
-myLogger = logger(myAppender, {
-  init_level = "ERROR"
-})
-```
+- `levels`: A table like the above `DEFAULT_LEVELS` but with a custom set of levels names.
+- `init_level`: A string of the log level the logger should start with.
 
-If you want to use a different set of `levels` use the constructor in a manner similar to this:
+### Changing log level after initialization
+
+You can change the log level after initialization with the following method:
 
 ```lua
-myLogger = logger(myAppender, {
-  levels = { "FATAL", "ERROR", "WARN", "MYSPECIAL_LEVEL", "INFO", "DEBUG"},
-  init_level = "WARN"
-})
+myLogger:setLevel('ERROR') -- makes only error / fatal messages appended
 ```
 
-For this particular case, the functions `myLogger:fatal()`, `myLogger:error()`, `myLogger:warn()`, `myLogger:myspecial_level()`, `myLogger:debug()` will be created automatically.
-
-**NOTE:** If you intend to use them frequently, then don't put any strings with characters which are not `[a-zA-Z_]` since you'll end up with per level functions which will be called like this:
-
-```lua
-myLogger["my-really-spcial-level"]("my really special log message")
-```
-
-That's missing the whole point of per-level functions. In addition, if a log level is not a string, a per-level function for it will not be created, for obvious reasons.
-
-### Changing the log level
-
-If you want to change the current log level, don't use `myLogger.level = "NEW_LEVEL"`, it's not recommended since it doesn't check the requested level is a member of `myLogger.levels` and it doesn't make sure you update `myLogger.level_order` along with it. Use `myLogger:setLevel` instead, it receives a number or a member of the array `myLogger.levels`. If you are using a number then it should designate the index of the log level which should be chosen.
-
-## Examples
-
-See [`examples/`](examples/).
+This method accepts the log level either as a number or as a string. The parameters `level` and `level_order` of `self` in the appender function will update accordingly so it is recommended to use this rather then manually changing the `myLogger`'s `level` and `level_order` fields.
