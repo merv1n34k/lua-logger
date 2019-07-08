@@ -109,3 +109,13 @@ myLogger:setLevel('ERROR') -- makes only error / fatal messages appended
 ```
 
 This method accepts the log level either as a number or as a string. The parameters `level` and `level_order` of `self` in the appender function will update accordingly so it is recommended to use this rather then manually changing the `myLogger`'s `level` and `level_order` fields.
+
+### Getting a level's index by name
+
+The Logger constructor creates a field in the returned logger called `levelIndexByName` which may help you getting the numerical level of any string level. Example:
+
+```lua
+> myLogger = require('logger')()
+> myLogger.levelIndexByName["WARN"] < myLogger.levelIndexByName["ERROR"]
+true
+```

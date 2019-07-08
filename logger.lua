@@ -53,6 +53,10 @@ return function(append, settings)
 		}
 	})
 	logger.levels = settings.levels
+	logger.levelIndexByName = {}
+	for k,v in ipairs(settings.levels) do
+		logger.levelIndexByName[v] = k
+	end
 
 	-- Per level function.
 	for _,l in pairs(logger.levels) do
