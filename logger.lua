@@ -77,6 +77,7 @@ return function(append, settings)
 
 	function logger:setLevel(level)
 		local order
+		-- print('logger.lua debug: requested level is ' .. level)
 		if type(level) == "number" then
 			order = level
 			level = self.levels[order]
@@ -91,6 +92,7 @@ return function(append, settings)
 			print('logger.lua err: level should be of type "string", not ' .. type(level))
 			return
 		end
+		-- print('logger.lua debug: changing level to ' .. level .. ' (order = ' .. order .. ')')
 		self.level = level
 		self.level_order = order
 	end
@@ -106,6 +108,8 @@ return function(append, settings)
 		elseif type(level) == "string" then
 			order = indexof(level, self.levels)
 		end
+		-- print('logger.lua debug: current level is ' .. self.level .. ' (order = ' .. self.level_order .. ')')
+		-- print('logger.lua debug: testing against ' .. order)
 		if order <= self.level_order then
 			return self:append(level, msg)
 		else
