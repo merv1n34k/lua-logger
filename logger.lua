@@ -69,6 +69,9 @@ return function(append, settings)
 			logger[l:lower()] = function(self, msg)
 				return self:log(l, msg)
 			end
+		else
+			print('logger.lua err: cannot create log level function for none string ' ..
+			      'default level ' .. tostring(l))
 		end
 	end
 
@@ -81,9 +84,11 @@ return function(append, settings)
 			order = indexof(level, self.levels)
 		end
 		if not level then
+			print('logger.lua err: level should be of type "number", not ' .. type(level))
 			return
 		end
 		if not order then
+			print('logger.lua err: level should be of type "string", not ' .. type(level))
 			return
 		end
 		self.level = level
